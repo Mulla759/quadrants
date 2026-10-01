@@ -1,5 +1,7 @@
 import { generateKeyBetween } from "fractional-indexing"
 import { customAlphabet } from "nanoid"
+import * as Y from "yjs"
+import { IndexeddbPersistence, clearDocument } from "y-indexeddb"
 
 export type QuadrantId = 1 | 2 | 3 | 4
 export type TaskLocation = QuadrantId | "inbox"
@@ -106,98 +108,128 @@ function cap(ids: string[], limit: number): string[] {
   return out
 }
 
+function withoutUndefined<T extends object>(value: T): T {
+  const out: Record<string, unknown> = {}
+  for (const key of Object.keys(value)) {
+    const v = (value as Record<string, unknown>)[key]
+    if (v !== undefined) out[key] = v
+  }
+  return out as T
+}
+
 const nano = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 12)
 
-interface MapData {
-  meta: MapMeta
-  tasks: Map<string, Task>
-  categories: Map<string, Category>
-  plans: Map<string, DailyPlan>
-}
+const MAP_DOC_PREFIX = "quadrant-map-"
+const WORKSPACE_DOC = "quadrant-workspace"
+const mapDocName = (mapId: string) => `${MAP_DOC_PREFIX}${mapId}`
 
-const storageKey = (mapId: string) => `quadrant:map:${mapId}`
-
-function loadMapData(mapId: string): MapData {
-  if (typeof localStorage !== "undefined") {
-    const raw = localStorage.getItem(storageKey(mapId))
-    if (raw) {
-      const parsed = JSON.parse(raw) as MapExport
-      return {
-        meta: parsed.map,
-        tasks: new Map(parsed.tasks.map((t) => [t.id, t])),
-        categories: new Map(parsed.categories.map((c) => [c.id, c])),
-        plans: new Map(parsed.plans.map((p) => [p.date, p])),
-      }
-    }
-  }
-  return {
-    meta: { id: mapId, name: "Untitled map", icon: "hash", createdAt: Date.now(), schemaVersion: SCHEMA_VERSION },
-    tasks: new Map(),
-    categories: new Map(),
-    plans: new Map(),
-  }
-}
-
-function serialize(data: MapData): MapExport {
-  return {
-    version: SCHEMA_VERSION,
-    map: data.meta,
-    tasks: [...data.tasks.values()],
-    categories: sortByOrder([...data.categories.values()]),
-    plans: [...data.plans.values()],
-  }
-}
+const mapStoreCache = new Map<string, Promise<MapStore>>()
 
 export class MapStore {
-  static async open(mapId: string): Promise<MapStore> {
-    return new MapStore(mapId)
+  static open(mapId: string): Promise<MapStore> {
+    const existing = mapStoreCache.get(mapId)
+    if (existing) return existing
+    const created = MapStore.create(mapId)
+    mapStoreCache.set(mapId, created)
+    created.catch(() => {
+      if (mapStoreCache.get(mapId) === created) mapStoreCache.delete(mapId)
+    })
+    return created
   }
 
   static async importJSON(json: string): Promise<MapStore> {
     const parsed = JSON.parse(json) as MapExport
     const mapId = nano()
+    const store = await MapStore.open(mapId)
+    store.doc.transact(() => {
+      store.metaMap.set("id", mapId)
+      store.metaMap.set("name", parsed.map.name || "Untitled map")
+      if (parsed.map.icon) store.metaMap.set("icon", parsed.map.icon)
+      store.metaMap.set("createdAt", Date.now())
+      store.metaMap.set("schemaVersion", SCHEMA_VERSION)
+      for (const task of parsed.tasks) store.tasksMap.set(task.id, withoutUndefined({ ...task }))
+      for (const category of parsed.categories) store.categoriesMap.set(category.id, withoutUndefined({ ...category }))
+      for (const plan of parsed.plans) {
+        store.plansMap.set(plan.date, {
+          date: plan.date,
+          focus: cap(plan.focus, FOCUS_LIMIT),
+          sideQuests: cap(plan.sideQuests, FOCUS_LIMIT),
+        })
+      }
+    })
+    await store.whenSaved()
+    return store
+  }
+
+  private static async create(mapId: string): Promise<MapStore> {
     const store = new MapStore(mapId)
-    const now = Date.now()
-    store.data.meta = { ...parsed.map, id: mapId, createdAt: now }
-    for (const task of parsed.tasks) store.data.tasks.set(task.id, { ...task })
-    for (const category of parsed.categories) store.data.categories.set(category.id, { ...category })
-    for (const plan of parsed.plans) store.data.plans.set(plan.date, { date: plan.date, focus: cap(plan.focus, FOCUS_LIMIT), sideQuests: cap(plan.sideQuests, FOCUS_LIMIT) })
-    store.persist()
+    await store.persistence.whenSynced
+    if (!store.metaMap.has("createdAt")) {
+      store.doc.transact(() => {
+        store.metaMap.set("id", mapId)
+        store.metaMap.set("name", "Untitled map")
+        store.metaMap.set("createdAt", Date.now())
+        store.metaMap.set("schemaVersion", SCHEMA_VERSION)
+      })
+    }
+    await store.whenSaved()
     return store
   }
 
   readonly mapId: string
-  private data: MapData
-  private listeners = new Set<() => void>()
+  private readonly doc: Y.Doc
+  private readonly persistence: IndexeddbPersistence
+  private readonly tasksMap: Y.Map<Task>
+  private readonly categoriesMap: Y.Map<Category>
+  private readonly plansMap: Y.Map<DailyPlan>
+  private readonly metaMap: Y.Map<string | number>
+  private readonly listeners = new Set<() => void>()
+  private pendingWrites = 0
+  private destroyed = false
 
   private constructor(mapId: string) {
     this.mapId = mapId
-    this.data = loadMapData(mapId)
+    this.doc = new Y.Doc()
+    this.tasksMap = this.doc.getMap<Task>("tasks")
+    this.categoriesMap = this.doc.getMap<Category>("categories")
+    this.plansMap = this.doc.getMap<DailyPlan>("plans")
+    this.metaMap = this.doc.getMap<string | number>("meta")
+    this.persistence = new IndexeddbPersistence(mapDocName(mapId), this.doc)
+    this.doc.on("update", this.onDocUpdate)
+  }
+
+  private readonly onDocUpdate = (_update: Uint8Array, origin: unknown): void => {
+    if (origin !== this.persistence) this.trackWrite()
+    this.notify()
   }
 
   get meta(): MapMeta {
-    return this.data.meta
+    return {
+      id: this.mapId,
+      name: (this.metaMap.get("name") as string) ?? "Untitled map",
+      icon: this.metaMap.get("icon") as string | undefined,
+      createdAt: (this.metaMap.get("createdAt") as number) ?? 0,
+      schemaVersion: (this.metaMap.get("schemaVersion") as number) ?? SCHEMA_VERSION,
+    }
   }
 
   get saved(): boolean {
-    return true
+    return this.persistence.synced && this.pendingWrites === 0
   }
 
   renameMap(name: string): void {
-    this.data.meta = { ...this.data.meta, name }
-    this.commit()
+    this.metaMap.set("name", name)
   }
 
   setIcon(icon: string): void {
-    this.data.meta = { ...this.data.meta, icon }
-    this.commit()
+    this.metaMap.set("icon", icon)
   }
 
   listTasks(filter?: { quadrant?: TaskLocation; includeCompleted?: boolean; includeArchived?: boolean }): Task[] {
     const includeCompleted = filter?.includeCompleted ?? true
     const includeArchived = filter?.includeArchived ?? false
     return sortByOrder(
-      [...this.data.tasks.values()].filter((t) => {
+      [...this.tasksMap.values()].filter((t) => {
         if (filter?.quadrant && t.quadrant !== filter.quadrant) return false
         if (!includeArchived && t.archivedAt) return false
         if (!includeCompleted && t.completedAt) return false
@@ -207,7 +239,7 @@ export class MapStore {
   }
 
   getTask(id: string): Task | undefined {
-    return this.data.tasks.get(id)
+    return this.tasksMap.get(id)
   }
 
   addTask(input: {
@@ -222,91 +254,92 @@ export class MapStore {
     const now = Date.now()
     const quadrant = input.quadrant ?? "inbox"
     const order = input.order ?? orderAfter(this.lastOrder(quadrant))
-    this.data.tasks.set(id, {
+    this.tasksMap.set(
       id,
-      title: input.title.trim(),
-      quadrant,
-      order,
-      categoryId: input.categoryId,
-      dueDate: input.dueDate,
-      notes: input.notes,
-      createdAt: now,
-      updatedAt: now,
-    })
-    this.commit()
+      withoutUndefined({
+        id,
+        title: input.title.trim(),
+        quadrant,
+        order,
+        categoryId: input.categoryId,
+        dueDate: input.dueDate,
+        notes: input.notes,
+        createdAt: now,
+        updatedAt: now,
+      }),
+    )
     return id
   }
 
   updateTask(id: string, patch: Partial<Pick<Task, "title" | "quadrant" | "categoryId" | "dueDate" | "notes">>): void {
-    const task = this.data.tasks.get(id)
+    const task = this.tasksMap.get(id)
     if (!task) return
-    this.data.tasks.set(id, { ...task, ...patch, updatedAt: Date.now() })
-    this.commit()
+    this.tasksMap.set(id, withoutUndefined({ ...task, ...patch, updatedAt: Date.now() }))
   }
 
   moveTask(id: string, quadrant: TaskLocation, order: string): void {
-    const task = this.data.tasks.get(id)
+    const task = this.tasksMap.get(id)
     if (!task) return
-    this.data.tasks.set(id, { ...task, quadrant, order, updatedAt: Date.now() })
-    this.commit()
+    this.tasksMap.set(id, withoutUndefined({ ...task, quadrant, order, updatedAt: Date.now() }))
   }
 
   completeTask(id: string): void {
-    const task = this.data.tasks.get(id)
+    const task = this.tasksMap.get(id)
     if (!task) return
-    this.data.tasks.set(id, { ...task, completedAt: Date.now(), updatedAt: Date.now() })
-    this.commit()
+    this.tasksMap.set(id, withoutUndefined({ ...task, completedAt: Date.now(), updatedAt: Date.now() }))
   }
 
   restoreTask(id: string): void {
-    const task = this.data.tasks.get(id)
+    const task = this.tasksMap.get(id)
     if (!task) return
     const { completedAt: _completedAt, ...rest } = task
-    this.data.tasks.set(id, { ...rest, updatedAt: Date.now() })
-    this.commit()
+    this.tasksMap.set(id, withoutUndefined({ ...rest, updatedAt: Date.now() }))
   }
 
   deleteTask(id: string): void {
-    this.data.tasks.delete(id)
-    for (const [date, plan] of this.data.plans) {
-      this.data.plans.set(date, {
-        date,
-        focus: plan.focus.filter((t) => t !== id),
-        sideQuests: plan.sideQuests.filter((t) => t !== id),
-      })
-    }
-    this.commit()
+    this.doc.transact(() => {
+      this.tasksMap.delete(id)
+      for (const [date, plan] of this.plansMap) {
+        const focus = plan.focus.filter((t) => t !== id)
+        const sideQuests = plan.sideQuests.filter((t) => t !== id)
+        if (focus.length !== plan.focus.length || sideQuests.length !== plan.sideQuests.length) {
+          this.plansMap.set(date, { date, focus, sideQuests })
+        }
+      }
+    })
   }
 
   listCategories(): Category[] {
-    return sortByOrder([...this.data.categories.values()])
+    return sortByOrder([...this.categoriesMap.values()])
   }
 
   addCategory(input: { name: string; color: CategoryColorIndex }): string {
     const id = nano()
     const last = this.listCategories().at(-1)
-    this.data.categories.set(id, { id, name: input.name.trim(), color: input.color, order: orderAfter(last?.order) })
-    this.commit()
+    this.categoriesMap.set(id, { id, name: input.name.trim(), color: input.color, order: orderAfter(last?.order) })
     return id
   }
 
   updateCategory(id: string, patch: Partial<Pick<Category, "name" | "color">>): void {
-    const category = this.data.categories.get(id)
+    const category = this.categoriesMap.get(id)
     if (!category) return
-    this.data.categories.set(id, { ...category, ...patch })
-    this.commit()
+    this.categoriesMap.set(id, withoutUndefined({ ...category, ...patch }))
   }
 
   deleteCategory(id: string): void {
-    this.data.categories.delete(id)
-    for (const [taskId, task] of this.data.tasks) {
-      if (task.categoryId === id) this.data.tasks.set(taskId, { ...task, categoryId: undefined, updatedAt: Date.now() })
-    }
-    this.commit()
+    this.doc.transact(() => {
+      this.categoriesMap.delete(id)
+      for (const [taskId, task] of this.tasksMap) {
+        if (task.categoryId === id) {
+          const { categoryId: _categoryId, ...rest } = task
+          this.tasksMap.set(taskId, withoutUndefined({ ...rest, updatedAt: Date.now() }))
+        }
+      }
+    })
   }
 
   getPlan(date: string): DailyPlan {
-    const plan = this.data.plans.get(date)
+    const plan = this.plansMap.get(date)
     return plan ? { date, focus: [...plan.focus], sideQuests: [...plan.sideQuests] } : { date, focus: [], sideQuests: [] }
   }
 
@@ -337,7 +370,7 @@ export class MapStore {
   carryOver(fromDate: string, toDate: string): void {
     const from = this.getPlan(fromDate)
     const to = this.getPlan(toDate)
-    const undone = (ids: string[]) => ids.filter((id) => !this.data.tasks.get(id)?.completedAt)
+    const undone = (ids: string[]) => ids.filter((id) => !this.getTask(id)?.completedAt)
     this.writePlan(toDate, {
       focus: cap([...to.focus, ...undone(from.focus)], FOCUS_LIMIT),
       sideQuests: cap([...to.sideQuests, ...undone(from.sideQuests)], FOCUS_LIMIT),
@@ -345,7 +378,7 @@ export class MapStore {
   }
 
   carryOverTo(toDate: string): void {
-    const previous = [...this.data.plans.keys()].filter((d) => d < toDate).sort().at(-1)
+    const previous = [...this.plansMap.keys()].filter((d) => d < toDate).sort().at(-1)
     if (previous) this.carryOver(previous, toDate)
   }
 
@@ -356,27 +389,43 @@ export class MapStore {
   archiveCompleted(olderThanMs: number = ARCHIVE_AFTER_MS): number {
     const cutoff = Date.now() - olderThanMs
     let count = 0
-    for (const [id, task] of this.data.tasks) {
-      if (task.completedAt && !task.archivedAt && task.completedAt <= cutoff) {
-        this.data.tasks.set(id, { ...task, archivedAt: Date.now() })
-        count++
+    this.doc.transact(() => {
+      for (const [id, task] of this.tasksMap) {
+        if (task.completedAt && !task.archivedAt && task.completedAt <= cutoff) {
+          this.tasksMap.set(id, { ...task, archivedAt: Date.now() })
+          count++
+        }
       }
-    }
-    if (count) this.commit()
+    })
     return count
   }
 
   exportJSON(): string {
-    return JSON.stringify(serialize(this.data))
+    const data: MapExport = {
+      version: SCHEMA_VERSION,
+      map: this.meta,
+      tasks: [...this.tasksMap.values()],
+      categories: this.listCategories(),
+      plans: [...this.plansMap.values()],
+    }
+    return JSON.stringify(data)
   }
 
   subscribe(listener: () => void): () => void {
     this.listeners.add(listener)
-    return () => this.listeners.delete(listener)
+    return () => {
+      this.listeners.delete(listener)
+    }
   }
 
   destroy(): void {
+    if (this.destroyed) return
+    this.destroyed = true
     this.listeners.clear()
+    this.doc.off("update", this.onDocUpdate)
+    mapStoreCache.delete(this.mapId)
+    void this.persistence.destroy()
+    this.doc.destroy()
   }
 
   private lastOrder(quadrant: TaskLocation): string | undefined {
@@ -385,22 +434,45 @@ export class MapStore {
 
   private writePlan(date: string, patch: Partial<Omit<DailyPlan, "date">>): void {
     const current = this.getPlan(date)
-    this.data.plans.set(date, { ...current, ...patch })
-    this.commit()
+    this.plansMap.set(date, { ...current, ...patch })
   }
 
-  private commit(): void {
-    this.persist()
-    for (const listener of this.listeners) listener()
-  }
-
-  private persist(): void {
-    if (typeof localStorage === "undefined") return
-    try {
-      localStorage.setItem(storageKey(this.mapId), this.exportJSON())
-    } catch {
-      /* storage full or unavailable */
+  private trackWrite(): void {
+    const db = this.persistence.db
+    if (!db || this.persistence._destroyed || this.destroyed) return
+    this.pendingWrites++
+    let settled = false
+    const done = () => {
+      if (settled) return
+      settled = true
+      this.pendingWrites = Math.max(0, this.pendingWrites - 1)
+      this.notify()
     }
+    try {
+      const tx = db.transaction("updates", "readonly")
+      tx.objectStore("updates").count()
+      tx.oncomplete = done
+      tx.onerror = done
+      tx.onabort = done
+    } catch {
+      done()
+    }
+  }
+
+  private notify(): void {
+    for (const listener of [...this.listeners]) listener()
+  }
+
+  private whenSaved(): Promise<void> {
+    if (this.saved) return Promise.resolve()
+    return new Promise((resolve) => {
+      const unsubscribe = this.subscribe(() => {
+        if (this.saved) {
+          unsubscribe()
+          resolve()
+        }
+      })
+    })
   }
 }
 
@@ -426,50 +498,54 @@ export const FOCUS_LIMIT = 3
 export const SCHEMA_VERSION = 1
 export const ARCHIVE_AFTER_MS = 7 * DAY
 
-interface WorkspaceData {
-  deviceId: string
-  mapIds: string[]
-  activeMapId?: string
-  theme: "light" | "dark"
-}
-
-const WORKSPACE_KEY = "quadrant:workspace"
-
 export class Workspace {
   static async open(): Promise<Workspace> {
     const workspace = new Workspace()
-    if (workspace.data.mapIds.length === 0) {
+    await workspace.persistence.whenSynced
+    workspace.ensureDevice()
+    if (workspace.mapIds.length === 0) {
       for (const name of ["Work", "School", "Personal"]) {
         await workspace.createMap(name, "hash")
       }
-      workspace.setActiveMap(workspace.data.mapIds[0])
     }
+    const active = workspace.activeMapId
+    if (!active || !workspace.mapIds.includes(active)) {
+      const first = workspace.mapIds[0]
+      if (first) workspace.setActiveMap(first)
+    }
+    for (const id of workspace.mapIds) await workspace.openMap(id)
     return workspace
   }
 
-  private data: WorkspaceData
-  private listeners = new Set<() => void>()
-  private stores = new Map<string, MapStore>()
+  private readonly doc: Y.Doc
+  private readonly persistence: IndexeddbPersistence
+  private readonly metaMap: Y.Map<string>
+  private readonly mapIdsArr: Y.Array<string>
+  private readonly listeners = new Set<() => void>()
+  private readonly stores = new Map<string, MapStore>()
+  private destroyed = false
 
   private constructor() {
-    let parsed: WorkspaceData | undefined
-    if (typeof localStorage !== "undefined") {
-      const raw = localStorage.getItem(WORKSPACE_KEY)
-      if (raw) parsed = JSON.parse(raw) as WorkspaceData
-    }
-    this.data = parsed ?? { deviceId: nano(), mapIds: [], activeMapId: undefined, theme: "light" }
-    if (!parsed) this.persist()
+    this.doc = new Y.Doc()
+    this.metaMap = this.doc.getMap<string>("meta")
+    this.mapIdsArr = this.doc.getArray<string>("mapIds")
+    this.persistence = new IndexeddbPersistence(WORKSPACE_DOC, this.doc)
+    this.doc.on("update", this.onDocUpdate)
+  }
+
+  private readonly onDocUpdate = (): void => {
+    this.notify()
+  }
+
+  private get mapIds(): string[] {
+    return this.mapIdsArr.toArray()
   }
 
   listMaps(): MapMeta[] {
-    return this.data.mapIds.map((id) => {
-      const open = this.stores.get(id)
-      if (open) return open.meta
-      if (typeof localStorage !== "undefined") {
-        const raw = localStorage.getItem(storageKey(id))
-        if (raw) return (JSON.parse(raw) as MapExport).map
-      }
-      return { id, name: "Untitled map", createdAt: Date.now(), schemaVersion: SCHEMA_VERSION }
+    return this.mapIds.map((id) => {
+      const store = this.stores.get(id)
+      if (store) return store.meta
+      return { id, name: "Untitled map", createdAt: 0, schemaVersion: SCHEMA_VERSION }
     })
   }
 
@@ -479,26 +555,32 @@ export class Workspace {
     store.renameMap(name)
     if (icon) store.setIcon(icon)
     this.stores.set(id, store)
-    this.data.mapIds = [...this.data.mapIds, id]
-    if (!this.data.activeMapId) this.data.activeMapId = id
-    this.commit()
+    this.mapIdsArr.push([id])
+    if (!this.activeMapId) this.metaMap.set("activeMapId", id)
+    this.notify()
     return id
   }
 
   renameMap(id: string, name: string): void {
     const store = this.stores.get(id)
     if (store) store.renameMap(name)
-    else this.data.mapIds = [...this.data.mapIds]
-    this.commit()
+    else void MapStore.open(id).then((s) => s.renameMap(name))
+    this.notify()
   }
 
   deleteMap(id: string): void {
     this.stores.get(id)?.destroy()
     this.stores.delete(id)
-    this.data.mapIds = this.data.mapIds.filter((m) => m !== id)
-    if (this.data.activeMapId === id) this.data.activeMapId = this.data.mapIds[0]
-    if (typeof localStorage !== "undefined") localStorage.removeItem(storageKey(id))
-    this.commit()
+    for (let i = this.mapIdsArr.length - 1; i >= 0; i--) {
+      if (this.mapIdsArr.get(i) === id) this.mapIdsArr.delete(i, 1)
+    }
+    if (this.activeMapId === id) {
+      const next = this.mapIds[0]
+      if (next) this.metaMap.set("activeMapId", next)
+      else this.metaMap.delete("activeMapId")
+    }
+    void clearDocument(mapDocName(id))
+    this.notify()
   }
 
   async openMap(id: string): Promise<MapStore> {
@@ -510,42 +592,45 @@ export class Workspace {
   }
 
   get activeMapId(): string | undefined {
-    return this.data.activeMapId
+    return this.metaMap.get("activeMapId")
   }
 
   setActiveMap(id: string): void {
-    this.data.activeMapId = id
-    this.commit()
+    this.metaMap.set("activeMapId", id)
   }
 
   get theme(): "light" | "dark" {
-    return this.data.theme
+    return this.metaMap.get("theme") === "dark" ? "dark" : "light"
   }
 
   setTheme(theme: "light" | "dark"): void {
-    this.data.theme = theme
-    this.commit()
+    this.metaMap.set("theme", theme)
   }
 
   subscribe(listener: () => void): () => void {
     this.listeners.add(listener)
-    return () => this.listeners.delete(listener)
+    return () => {
+      this.listeners.delete(listener)
+    }
   }
 
   destroy(): void {
+    if (this.destroyed) return
+    this.destroyed = true
     this.listeners.clear()
+    this.doc.off("update", this.onDocUpdate)
     for (const store of this.stores.values()) store.destroy()
     this.stores.clear()
+    void this.persistence.destroy()
+    this.doc.destroy()
   }
 
-  private commit(): void {
-    this.persist()
-    for (const listener of this.listeners) listener()
+  private ensureDevice(): void {
+    if (!this.metaMap.has("deviceId")) this.metaMap.set("deviceId", nano())
   }
 
-  private persist(): void {
-    if (typeof localStorage === "undefined") return
-    localStorage.setItem(WORKSPACE_KEY, JSON.stringify(this.data))
+  private notify(): void {
+    for (const listener of [...this.listeners]) listener()
   }
 }
 
