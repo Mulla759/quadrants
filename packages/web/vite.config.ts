@@ -5,6 +5,10 @@ import { defineConfig } from "vite"
 import { VitePWA } from "vite-plugin-pwa"
 
 export default defineConfig({
+  appType: "spa",
+  build: {
+    target: ["es2019", "safari13"],
+  },
   plugins: [
     react(),
     tailwindcss(),
@@ -15,7 +19,8 @@ export default defineConfig({
         name: "Quadrant",
         short_name: "Quadrant",
         description: "A calm, text-first priority map",
-        start_url: "/",
+        start_url: "/app",
+        scope: "/",
         display: "standalone",
         background_color: "#FAFAF9",
         theme_color: "#1F1F1F",

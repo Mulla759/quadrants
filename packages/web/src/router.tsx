@@ -20,8 +20,13 @@ function getServerSnapshot(): string {
 }
 
 export function navigate(to: string): void {
-  if (window.location.pathname === to) return
-  window.history.pushState(null, "", to)
+  if (typeof window === "undefined") return
+  const target = new URL(to, window.location.origin)
+  const current = window.location
+  if (current.pathname === target.pathname && current.search === target.search && current.hash === target.hash) {
+    return
+  }
+  window.history.pushState(null, "", `${target.pathname}${target.search}${target.hash}`)
   window.dispatchEvent(new Event(NAVIGATE_EVENT))
   window.scrollTo(0, 0)
 }

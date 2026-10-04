@@ -16,6 +16,8 @@ import {
   type MapMeta,
   type Task,
 } from "@quadrant/core"
+import { Logo } from "../components/ui/Logo"
+import { hasIndexedDB } from "./browser"
 
 export interface MapSnapshot {
   tasks: Task[]
@@ -87,7 +89,25 @@ const emptyWorkspaceSnapshot: WorkspaceSnapshot = { maps: [], activeMapId: undef
 
 const WorkspaceContext = createContext<WorkspaceContextValue | undefined>(undefined)
 
+function StorageUnavailable() {
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-3 bg-bg px-6 text-center text-ink">
+      <Logo className="h-8 w-8 rounded-[6px]" />
+      <p className="text-[14px] font-medium">Quadrant needs browser storage.</p>
+      <p className="max-w-[380px] text-[13px] text-muted">
+        This browser has IndexedDB disabled or unavailable — often because you are in private mode or a restricted
+        context. Open Quadrant in a normal window, or update to a current version of Chrome, Edge, Firefox, or Safari.
+      </p>
+    </div>
+  )
+}
+
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
+  if (!hasIndexedDB()) return <StorageUnavailable />
+  return <WorkspaceProviderInner>{children}</WorkspaceProviderInner>
+}
+
+function WorkspaceProviderInner({ children }: { children: ReactNode }) {
   const [workspace, setWorkspace] = useState<Workspace>()
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading")
   const [error, setError] = useState<Error>()
