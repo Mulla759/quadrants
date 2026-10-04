@@ -7,6 +7,7 @@ Source of truth: `~/Documents/quadrant.pen`. The MVP is built from frame **1. Qu
 
 | Frame | Status | Use |
 | --- | --- | --- |
+| 0. Landing Page | **Implemented** | Marketing page served at `/` (app at `/app`). React source in `packages/web/src/landing/`; exported reference in `design/landing/`. |
 | 1. Quiet Canvas | **Source of truth** | Map view: sidebar, top bar, 2×2 matrix, status bar, all interaction states |
 | 2. Matrix Map | Retired | Alternative explored for the PRD open question; not used |
 | 3. Priority Board | Retired (WIP probe) | Not used |

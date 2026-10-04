@@ -21,7 +21,7 @@ three side quests for balance. Unfinished daily picks carry over until they are 
 
 ```sh
 pnpm install
-pnpm dev        # http://localhost:5173
+pnpm dev        # http://localhost:5173/ (landing) · http://localhost:5173/app (app)
 pnpm test
 pnpm build
 ```
@@ -29,12 +29,13 @@ pnpm build
 ## Structure
 
 ```
+design/landing  exported design references for the landing page (frame "0. Landing Page")
 packages/core   @quadrant/core — data model, Yjs docs, IndexedDB, ordering, daily plans
-packages/web    @quadrant/web  — React + Vite + Tailwind app
+packages/web    @quadrant/web  — React + Vite + Tailwind (landing page at /, app at /app)
 ```
 
-Design source of truth is `~/Documents/quadrant.pen` (frame "1. Quiet Canvas"); see `DESIGN.md`.
-Agent and API notes live in `AGENT.md`.
+Design source of truth is `~/Documents/quadrant.pen` (frame "1. Quiet Canvas" for the app, frame
+"0. Landing Page" for the site); see `DESIGN.md`. Agent and API notes live in `AGENT.md`.
 
 ## Roadmap
 

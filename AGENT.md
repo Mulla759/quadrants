@@ -8,12 +8,27 @@ and color-coded life categories. Local-first, no account. See `README.md` for th
 
 ```
 quadrants/
+├─ design/
+│  └─ landing/          Exported design references for the landing page (frame "0. Landing Page")
 ├─ packages/
 │  ├─ core/   @quadrant/core — data model, Yjs docs, IndexedDB persistence, ordering, plans
-│  └─ web/    @quadrant/web  — React + Vite + Tailwind app (the MVP)
+│  └─ web/    @quadrant/web  — React + Vite + Tailwind app (the MVP + landing page)
 ├─ pnpm-workspace.yaml
 ├─ turbo.json
 ```
+
+## Routing
+
+Two surfaces share one Vite app, selected in `packages/web/src/Root.tsx` via the tiny router in
+`packages/web/src/router.tsx` (no dependency):
+
+- `/` — the landing page (`packages/web/src/landing/**`). Composition only in `LandingPage.tsx`;
+  each section is one file under `landing/sections/`; shared presentational primitives under
+  `landing/ui/`. Keep sections self-contained (SRP) so edits to one never break another.
+- `/app` (and `/app/...`) — the application (`packages/web/src/App.tsx` and `components/**`).
+
+Navigate with `navigate("/app")`; never use a raw `<a href>` that reloads the page for in-app
+routing. The PWA `start_url` is `/app`.
 
 ## Commands
 
@@ -159,8 +174,9 @@ Commit style: `feat(core): …`, `feat(web): …`, `chore: …`, `docs: …`.
 
 1. `pnpm typecheck` and `pnpm test` are green.
 2. `pnpm build` succeeds.
-3. The app is loaded in the pen.dev integrated browser (`load-page http://localhost:5173`), then
-   checked with `return-screenshot` and driven with CDP for the keyboard flows (add, triage, today,
-   complete, reload persistence).
+3. Both surfaces are loaded in the pen.dev integrated browser — the landing page
+   (`load-page http://localhost:5173/`) and the app (`load-page http://localhost:5173/app`) — then
+   checked with `return-screenshot`; the app is driven with CDP for the keyboard flows (add, triage,
+   today, complete, reload persistence).
 
 Update `DESIGN.md` when a design decision changes and this file when the API or commands change.

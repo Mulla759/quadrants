@@ -1,6 +1,6 @@
 export const SCRIBBLE_HEIGHT = 20
 export const SCRIBBLE_SEGMENTS = 240
-export const SCRIBBLE_LOOPS = 20
+export const SCRIBBLE_LOOPS = 9
 export const SCRIBBLE_MARGIN = 4
 export const SCRIBBLE_STROKE = "#52525B"
 export const SCRIBBLE_WIDTH = 1.2
