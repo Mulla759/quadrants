@@ -1,8 +1,9 @@
 # AGENT.md: working in this repo
 
 Quadrant is a calm, text-first to-do app built on one urgency × importance map, a daily top three,
-and color-coded life categories. Local-first, no account. See `README.md` for the product and
-`DESIGN.md` for the visual system. The full PRD lives in the task description / issue tracker.
+and color-coded life categories. Local-first, no account. See the root [`README.md`](../README.md)
+for the product and [`DESIGN.md`](DESIGN.md) for the visual system. The full PRD lives in the task
+description / issue tracker.
 
 ## Repo layout
 
@@ -10,12 +11,17 @@ and color-coded life categories. Local-first, no account. See `README.md` for th
 quadrants/
 ├─ design/
 │  └─ landing/          Exported design references for the landing page (frame "0. Landing Page")
+├─ docs/                Project docs: AGENT.md, DESIGN.md, BROWSER_SUPPORT.md
 ├─ packages/
 │  ├─ core/   @quadrant/core: data model, Yjs docs, IndexedDB persistence, ordering, plans
 │  └─ web/    @quadrant/web : React + Vite + Tailwind app (the MVP + landing page)
-├─ pnpm-workspace.yaml
-├─ turbo.json
+├─ package.json · pnpm-workspace.yaml · pnpm-lock.yaml · turbo.json · tsconfig.base.json
+└─ README.md · LICENSE · AGENTS.md
 ```
+
+Root config (`package.json`, `pnpm-workspace.yaml`, `pnpm-lock.yaml`, `turbo.json`,
+`tsconfig.base.json`) must stay at the repository root: pnpm and Turborepo resolve it from there.
+
 
 ## Routing
 

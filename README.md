@@ -52,12 +52,14 @@ pnpm build
 
 ```
 design/landing  exported design references for the landing page
+docs/           project docs: agent notes, design system, browser support
 packages/core   @quadrant/core · data model, Yjs docs, IndexedDB, ordering, daily plans
 packages/web    @quadrant/web  · React + Vite + Tailwind (landing at /, app at /app)
 ```
 
-Design source of truth is `~/Documents/quadrant.pen`; see `DESIGN.md`. Agent and API notes live
-in `AGENT.md`.
+Design source of truth is `~/Documents/quadrant.pen`; see [`docs/DESIGN.md`](docs/DESIGN.md).
+Agent and API notes live in [`docs/AGENT.md`](docs/AGENT.md); every doc is indexed in
+[`docs/`](docs/README.md).
 
 ## Roadmap
 
