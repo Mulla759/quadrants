@@ -488,10 +488,10 @@ export const CATEGORY_COLORS = [
 ] as const
 
 export const QUADRANTS: readonly { id: QuadrantId; number: string; name: string; description: string }[] = [
-  { id: 1, number: "01", name: "Most important", description: "Urgent and important — do first" },
-  { id: 2, number: "02", name: "Semi-important", description: "Urgent, less important — batch or delegate" },
-  { id: 3, number: "03", name: "Good to do", description: "Important, not urgent — schedule it" },
-  { id: 4, number: "04", name: "Least important", description: "Neither — drop it or do it later" },
+  { id: 1, number: "01", name: "Most important", description: "Urgent and important. Do first" },
+  { id: 2, number: "02", name: "Semi-important", description: "Urgent, less important. Batch or delegate" },
+  { id: 3, number: "03", name: "Good to do", description: "Important, not urgent. Schedule it" },
+  { id: 4, number: "04", name: "Least important", description: "Neither. Drop it or do it later" },
 ]
 
 export const FOCUS_LIMIT = 3

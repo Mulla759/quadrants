@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import {
   Archive,
   ArrowDown,
@@ -20,23 +20,8 @@ import {
   Sun,
 } from "lucide-react"
 import { cn } from "../../lib/utils"
-import { drawScribble, SCRIBBLE_HEIGHT } from "../../lib/scribble"
-
-function DoneScribble({ width, className }: { width: number; className?: string }) {
-  const ref = useRef<HTMLCanvasElement>(null)
-  useEffect(() => {
-    if (ref.current) drawScribble(ref.current, width, 1)
-  }, [width])
-  return (
-    <canvas
-      ref={ref}
-      height={SCRIBBLE_HEIGHT}
-      className={className}
-      style={{ width, height: SCRIBBLE_HEIGHT }}
-      aria-hidden
-    />
-  )
-}
+import { Scribble } from "../ui/Scribble"
+import { useInView } from "../ui/useInView"
 
 function SidebarRow({
   icon,
@@ -126,7 +111,7 @@ function QuadTask({
       {meta && <div className="shrink-0 whitespace-nowrap text-[11px] text-muted">{meta}</div>}
       {ellipsis && <Ellipsis size={16} className="shrink-0 text-muted" />}
       {done && scribbleWidth !== undefined && (
-        <DoneScribble width={scribbleWidth} className="absolute left-[27px] top-[5px] z-[2]" />
+        <Scribble width={scribbleWidth} className="absolute left-[27px] top-[5px] z-[2]" />
       )}
     </div>
   )
@@ -137,6 +122,84 @@ function AddTask() {
     <div className="flex h-[30px] w-full shrink-0 items-center gap-[8px] px-[8px]">
       <Plus size={15} className="shrink-0 text-faint" />
       <div className="whitespace-nowrap text-[14px] text-faint">New task</div>
+    </div>
+  )
+}
+
+const DEMO_TITLE = "Clear out old downloads"
+const DEMO_SCRIBBLE_WIDTH = 174
+
+type DemoPhase = "typing" | "pause" | "saved" | "done"
+
+function InlineTaskDemo() {
+  const [phase, setPhase] = useState<DemoPhase>("typing")
+  const [chars, setChars] = useState(0)
+  const { ref, inView } = useInView<HTMLDivElement>()
+
+  useEffect(() => {
+    if (!inView || phase !== "typing") return
+    if (chars >= DEMO_TITLE.length) {
+      const timer = setTimeout(() => setPhase("pause"), 280)
+      return () => clearTimeout(timer)
+    }
+    const timer = setTimeout(() => setChars((count) => count + 1), 58)
+    return () => clearTimeout(timer)
+  }, [inView, phase, chars])
+
+  useEffect(() => {
+    if (!inView) return
+    if (phase === "pause") {
+      const timer = setTimeout(() => setPhase("saved"), 900)
+      return () => clearTimeout(timer)
+    }
+    if (phase === "saved") {
+      const timer = setTimeout(() => setPhase("done"), 950)
+      return () => clearTimeout(timer)
+    }
+    if (phase === "done") {
+      const timer = setTimeout(() => {
+        setChars(0)
+        setPhase("typing")
+      }, 2300)
+      return () => clearTimeout(timer)
+    }
+  }, [inView, phase])
+
+  const inline = phase === "typing" || phase === "pause"
+  const done = phase === "done"
+
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "relative flex h-[30px] w-full shrink-0 flex-row items-center gap-[8px] rounded-[4px] px-[8px]",
+        inline && "border border-accent bg-surface",
+      )}
+    >
+      {done ? (
+        <CircleCheck size={15} className="relative z-[1] shrink-0 text-faint" />
+      ) : (
+        <Circle size={15} className="shrink-0 text-muted" />
+      )}
+      <div
+        className={cn(
+          "min-w-0 flex-1 truncate text-left text-[14px]",
+          done ? "relative z-[1] text-faint" : "text-ink",
+        )}
+      >
+        {inline ? DEMO_TITLE.slice(0, chars) : DEMO_TITLE}
+      </div>
+      {inline ? <div className="caret h-[16px] w-[2px] shrink-0 bg-accent" /> : null}
+      {inline ? (
+        <div className="shrink-0 whitespace-nowrap font-mono text-[11px] text-faint">
+          enter save · esc cancel
+        </div>
+      ) : done ? (
+        <div className="shrink-0 whitespace-nowrap text-[11px] text-muted">Done</div>
+      ) : null}
+      {done ? (
+        <Scribble width={DEMO_SCRIBBLE_WIDTH} className="absolute left-[31px] top-[5px] z-[2]" />
+      ) : null}
     </div>
   )
 }
@@ -303,7 +366,7 @@ export function ProductWindow() {
                     index="03"
                     title="Good to do"
                     count="3"
-                    subtitle="Important, not urgent — schedule it"
+                    subtitle="Important, not urgent. Schedule it"
                   />
                   <div className="flex w-full shrink-0 flex-col gap-[2px]">
                     <QuadTask title="Outline research essay" dot="#4E8A7E" meta="School · Oct 12" />
@@ -318,7 +381,7 @@ export function ProductWindow() {
                     index="01"
                     title="Most important"
                     count="4"
-                    subtitle="Urgent and important — do first"
+                    subtitle="Urgent and important. Do first"
                     align="end"
                   />
                   <div className="flex w-full shrink-0 flex-col gap-[2px]">
@@ -339,22 +402,14 @@ export function ProductWindow() {
 
                 <div className="absolute left-0 top-[307px] z-[2] flex h-[307px] w-[432px] flex-col justify-between gap-[16px] p-[24px]">
                   <div className="flex w-full shrink-0 flex-col gap-[2px]">
-                    <div className="relative flex h-[30px] w-full shrink-0 flex-row items-center gap-[8px] rounded-[4px] border border-accent bg-surface px-[8px]">
-                      <Circle size={15} className="shrink-0 text-muted" />
-                      <div className="text-left text-[14px] text-ink">Clear out old downloads</div>
-                      <div className="h-[16px] w-[2px] shrink-0 bg-accent" />
-                      <div className="flex-1" />
-                      <div className="whitespace-nowrap font-mono text-[11px] text-faint">
-                        enter save · esc cancel
-                      </div>
-                    </div>
+                    <InlineTaskDemo />
                     <QuadTask title="Reorganize bookmarks" />
                   </div>
                   <QuadrantHeader
                     index="04"
                     title="Least important"
                     count="1"
-                    subtitle="Neither — drop it or do it later"
+                    subtitle="Neither. Drop it or do it later"
                     align="end"
                   />
                 </div>
@@ -376,7 +431,7 @@ export function ProductWindow() {
                     index="02"
                     title="Semi-important"
                     count="3"
-                    subtitle="Urgent, less important — batch or delegate"
+                    subtitle="Urgent, less important. Batch or delegate"
                     align="end"
                   />
                 </div>

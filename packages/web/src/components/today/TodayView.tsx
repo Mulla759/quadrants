@@ -166,13 +166,13 @@ export function TodayView() {
         {renderSection(
           "focus",
           "Top three",
-          "Urgent + important — pick up to three",
+          "Urgent + important. Pick up to three",
           focusTasks,
         )}
         {renderSection(
           "sideQuests",
           "Side quests",
-          "Rest, play, people — keep the day balanced",
+          "Rest, play, people. Keep the day balanced",
           sideTasks,
         )}
 

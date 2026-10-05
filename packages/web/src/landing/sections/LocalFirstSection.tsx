@@ -32,14 +32,14 @@ export function LocalFirstSection() {
       <Container className="flex flex-col items-start gap-[80px] pt-[144px] pb-[136px]">
         <div className="flex w-full flex-row items-end justify-between">
           <div className="flex flex-col items-start gap-[20px]">
-            <MonoLabel>06 — LOCAL-FIRST</MonoLabel>
+            <MonoLabel>06 · LOCAL-FIRST</MonoLabel>
             <h2 className="text-[52px] leading-[55px] font-semibold tracking-[-1.8px] text-ink">
               Yours. On this device.
             </h2>
           </div>
           <p className="w-[420px] shrink-0 text-[17px] leading-[27px] text-muted">
             Quadrant runs entirely in your browser. There’s no account and no server holding your
-            lists — everything stays on your machine, and leaves only when you export it.
+            lists. Everything stays on your machine, and leaves only when you export it.
           </p>
         </div>
 
@@ -60,7 +60,7 @@ export function LocalFirstSection() {
             className="border-r border-line px-[28px]"
             icon={<Download className={iconClass} strokeWidth={2} />}
             title="Plain JSON export"
-            body="Take a map anywhere, any time — and import it back just as easily."
+            body="Take a map anywhere, any time, and import it back just as easily."
           />
           <Feature
             className="px-[28px]"

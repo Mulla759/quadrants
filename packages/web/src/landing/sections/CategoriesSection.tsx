@@ -46,7 +46,7 @@ export function CategoriesSection() {
       <Container className="flex flex-col gap-[80px] border-t border-line pt-[136px] pb-[144px]">
         <div className="flex w-full flex-row items-end justify-between">
           <div className="flex w-fit shrink-0 flex-col gap-[20px]">
-            <MonoLabel>04 — CATEGORIES</MonoLabel>
+            <MonoLabel>04 · CATEGORIES</MonoLabel>
             <h2 className="whitespace-nowrap text-[52px]/[55px] font-semibold tracking-[-1.8px] text-ink">
               Color means life area.
               <br />
@@ -54,7 +54,7 @@ export function CategoriesSection() {
             </h2>
           </div>
           <p className="w-[420px] shrink-0 text-[17px]/[27px] text-muted">
-            Tag tasks with up to eight muted colors — whatever your life is made of. The quadrants
+            Tag tasks with up to eight muted colors, whatever your life is made of. The quadrants
             stay neutral, so a glance at the dots shows when one part of your life is crowding out
             the rest.
           </p>

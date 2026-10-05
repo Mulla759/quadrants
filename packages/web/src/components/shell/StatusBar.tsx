@@ -9,6 +9,7 @@ const HINTS: Array<{ keys: string; label: string }> = [
   { keys: "1–4", label: "move" },
   { keys: "/", label: "search" },
   { keys: "⌘K", label: "commands" },
+  { keys: "⌘P", label: "print" },
 ]
 
 export function StatusBar() {

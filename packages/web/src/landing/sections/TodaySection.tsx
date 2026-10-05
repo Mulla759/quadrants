@@ -22,7 +22,7 @@ function DoneScribble({ width, className }: { width: number; className?: string 
 }
 
 const STATS: { value: string; label: string; refresh?: boolean }[] = [
-  { value: "3 / 3", label: "Top three — urgent and important, picked by you" },
+  { value: "3 / 3", label: "Top three: urgent and important, picked by you" },
   { value: "+ 3", label: "Side quests keep the rest of your life in the day" },
   { value: "", label: "Unfinished picks carry over until they’re done", refresh: true },
 ]
@@ -122,14 +122,14 @@ export function TodaySection() {
     <section id="today" className="w-full scroll-mt-[72px] bg-sidebar">
       <Container className="flex flex-row items-center gap-[96px] py-[136px]">
         <div className="flex w-[440px] shrink-0 flex-col gap-[28px]">
-          <MonoLabel>02 — TODAY</MonoLabel>
+          <MonoLabel>02 · TODAY</MonoLabel>
           <h2 className="w-full text-[48px]/[52px] font-semibold tracking-[-1.6px] text-ink">
             Three things today.
             <br />
             Three just for you.
           </h2>
           <p className="w-full text-[17px]/[27px] text-muted">
-            Each morning, pull up to three priorities off the map — plus three side quests for rest,
+            Each morning, pull up to three priorities off the map, plus three side quests for rest,
             play and people. Whatever you don’t finish carries over until it’s done. No pile-up, no
             guilt.
           </p>
@@ -167,7 +167,7 @@ export function TodaySection() {
               <GroupHeader
                 title="Top three"
                 count="3 / 3"
-                subtitle="Urgent + important — pick up to three"
+                subtitle="Urgent + important. Pick up to three"
               />
               <div className="flex w-full shrink-0 flex-col gap-[2px]">
                 {TOP_THREE.map((pick) => (
@@ -180,7 +180,7 @@ export function TodaySection() {
               <GroupHeader
                 title="Side quests"
                 count="2 / 3"
-                subtitle="Rest, play, people — keep the day balanced"
+                subtitle="Rest, play, people. Keep the day balanced"
               />
               <div className="flex w-full shrink-0 flex-col gap-[2px]">
                 {SIDE_QUESTS.map((pick) => (

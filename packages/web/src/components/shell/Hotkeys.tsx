@@ -55,13 +55,19 @@ export function Hotkeys() {
         ui.setPaletteOpen(true)
         return
       }
+      if (mod && event.key.toLowerCase() === "p") {
+        event.preventDefault()
+        ui.setPrintOpen(true)
+        return
+      }
       if (mod && event.shiftKey && event.key.toLowerCase() === "l") {
         event.preventDefault()
         setTheme(theme === "dark" ? "light" : "dark")
         return
       }
       if (event.key === "Escape") {
-        if (ui.paletteOpen) ui.setPaletteOpen(false)
+        if (ui.printOpen) ui.setPrintOpen(false)
+        else if (ui.paletteOpen) ui.setPaletteOpen(false)
         else if (ui.searchOpen) ui.setSearchOpen(false)
         else if (ui.categoriesOpen) ui.setCategoriesOpen(false)
         else if (ui.detailTaskId) ui.closeDetail()

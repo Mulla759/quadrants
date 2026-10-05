@@ -7,6 +7,7 @@ const LINKS = [
   { label: "How it works", href: "#the-map" },
   { label: "Today", href: "#today" },
   { label: "Categories", href: "#categories" },
+  { label: "Origin", href: "#origin" },
   { label: "Shortcuts", href: "#shortcuts" },
   { label: "Privacy", href: "#local-first" },
 ] as const

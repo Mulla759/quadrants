@@ -1,4 +1,4 @@
-# Quadrant — Design
+# Quadrant · Design
 
 Source of truth: `~/Documents/quadrant.pen`. The MVP is built from frame **1. Quiet Canvas**
 (desktop 1440×900). Do not redesign the system; implement it.
@@ -66,10 +66,10 @@ dark values were added to the same variables (theme axis `mode`).
 
 | id | Position | Number | Title | Description |
 | --- | --- | --- | --- | --- |
-| 1 | top-right | 01 | Most important | Urgent and important — do first |
-| 2 | bottom-right | 02 | Semi-important | Urgent, less important — batch or delegate |
-| 3 | top-left | 03 | Good to do | Important, not urgent — schedule it |
-| 4 | bottom-left | 04 | Least important | Neither — drop it or do it later |
+| 1 | top-right | 01 | Most important | Urgent and important. Do first |
+| 2 | bottom-right | 02 | Semi-important | Urgent, less important. Batch or delegate |
+| 3 | top-left | 03 | Good to do | Important, not urgent. Schedule it |
+| 4 | bottom-left | 04 | Least important | Neither. Drop it or do it later |
 
 Quadrant label = number (mono 11 faint) · title (13/500) · count (mono 11 faint), then description
 (11 faint), then the task list. Quadrants themselves stay uncolored.
@@ -99,16 +99,16 @@ life area. The 8 muted colors:
 5 `#C05F45` Private · 6 `#6E9163` Scouts · 7 `#BC5B6B` Health · 8 `#64748B` Admin
 
 Categories frame: rows (dot · name · count · ellipsis), the selected row expands to 8 swatches (14px,
-active swatch ringed with accent), "New category", and the note "Quadrants stay uncolored — color marks
+active swatch ringed with accent), "New category", and the note "Quadrants stay uncolored. Color marks
 the life area."
 
 ## Today view
 
 Header ("Today", date + "picks stay until done"), then two sections:
 
-- **Top three** — "3 / 3", "Urgent + important — pick up to three". Picks are numbered 1–3 (mono 11 faint),
+- **Top three**: "3 / 3", "Urgent + important. Pick up to three". Picks are numbered 1–3 (mono 11 faint),
   rows carry the category dot; full list shows no add row.
-- **Side quests** — "2 / 3", "Rest, play, people — keep the day balanced". Rows + "Add pick".
+- **Side quests**: "2 / 3", "Rest, play, people. Keep the day balanced". Rows + "Add pick".
 - Unfinished picks carry over to the next day until completed.
 
 ## Command palette

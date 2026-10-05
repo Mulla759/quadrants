@@ -6,6 +6,7 @@ import {
   Map as MapIcon,
   Moon,
   Plus,
+  Printer,
   Search,
   Sun,
   Tags,
@@ -22,8 +23,17 @@ const itemClass =
 
 export function CommandPalette() {
   const { workspace, maps, activeMapId, store, setActiveMap, setTheme, theme } = useWorkspace()
-  const { paletteOpen, setPaletteOpen, setView, startCreate, focusedQuadrant, openDetail, setCategoriesOpen, pushToast } =
-    useUI()
+  const {
+    paletteOpen,
+    setPaletteOpen,
+    setView,
+    startCreate,
+    focusedQuadrant,
+    openDetail,
+    setCategoriesOpen,
+    setPrintOpen,
+    pushToast,
+  } = useUI()
 
   const activeMap = maps.find((map) => map.id === activeMapId)
   const close = () => setPaletteOpen(false)
@@ -132,6 +142,16 @@ export function CommandPalette() {
             >
               {theme === "dark" ? <Sun className="h-[14px] w-[14px] text-faint" /> : <Moon className="h-[14px] w-[14px] text-faint" />}{" "}
               Toggle dark mode
+            </Command.Item>
+            <Command.Item
+              value="Print list"
+              className={itemClass}
+              onSelect={() => {
+                close()
+                setPrintOpen(true)
+              }}
+            >
+              <Printer className="h-[14px] w-[14px] text-faint" /> Print list
             </Command.Item>
             <Command.Item
               value="Export map"

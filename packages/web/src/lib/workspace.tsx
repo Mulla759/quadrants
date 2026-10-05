@@ -95,7 +95,7 @@ function StorageUnavailable() {
       <Logo className="h-8 w-8 rounded-[6px]" />
       <p className="text-[14px] font-medium">Quadrant needs browser storage.</p>
       <p className="max-w-[380px] text-[13px] text-muted">
-        This browser has IndexedDB disabled or unavailable — often because you are in private mode or a restricted
+        This browser has IndexedDB disabled or unavailable, often because you are in private mode or a restricted
         context. Open Quadrant in a normal window, or update to a current version of Chrome, Edge, Firefox, or Safari.
       </p>
     </div>

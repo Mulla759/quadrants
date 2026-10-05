@@ -1,4 +1,4 @@
-import { Menu, Search } from "lucide-react"
+import { Menu, Printer, Search } from "lucide-react"
 import { useMemo } from "react"
 import { todayKey } from "@quadrant/core"
 import { useUI, type ViewKey } from "../../lib/ui"
@@ -15,7 +15,7 @@ const VIEW_LABEL: Record<ViewKey, string> = {
 
 export function TopBar() {
   const { map, maps, activeMapId, store } = useWorkspace()
-  const { view, setPaletteOpen, setSearchOpen, setSidebarOpen } = useUI()
+  const { view, setPaletteOpen, setSearchOpen, setSidebarOpen, setPrintOpen } = useUI()
 
   const activeMap = maps.find((candidate) => candidate.id === activeMapId)
   const count = useMemo(() => {
@@ -67,6 +67,16 @@ export function TopBar() {
       >
         <span className="font-mono text-[10px]">⌘K</span>
         <span>Commands</span>
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setPrintOpen(true)}
+        aria-label="Print list"
+        title="Print list (⌘P)"
+        className="flex h-7 w-7 items-center justify-center rounded-[4px] text-faint outline-none hover:bg-hover hover:text-muted focus-visible:ring-2 focus-visible:ring-accent"
+      >
+        <Printer className="h-[15px] w-[15px]" />
       </button>
 
       <span

@@ -1,4 +1,4 @@
-# AGENT.md — working in this repo
+# AGENT.md: working in this repo
 
 Quadrant is a calm, text-first to-do app built on one urgency × importance map, a daily top three,
 and color-coded life categories. Local-first, no account. See `README.md` for the product and
@@ -11,8 +11,8 @@ quadrants/
 ├─ design/
 │  └─ landing/          Exported design references for the landing page (frame "0. Landing Page")
 ├─ packages/
-│  ├─ core/   @quadrant/core — data model, Yjs docs, IndexedDB persistence, ordering, plans
-│  └─ web/    @quadrant/web  — React + Vite + Tailwind app (the MVP + landing page)
+│  ├─ core/   @quadrant/core: data model, Yjs docs, IndexedDB persistence, ordering, plans
+│  └─ web/    @quadrant/web : React + Vite + Tailwind app (the MVP + landing page)
 ├─ pnpm-workspace.yaml
 ├─ turbo.json
 ```
@@ -22,10 +22,10 @@ quadrants/
 Two surfaces share one Vite app, selected in `packages/web/src/Root.tsx` via the tiny router in
 `packages/web/src/router.tsx` (no dependency):
 
-- `/` — the landing page (`packages/web/src/landing/**`). Composition only in `LandingPage.tsx`;
+- `/`: the landing page (`packages/web/src/landing/**`). Composition only in `LandingPage.tsx`;
   each section is one file under `landing/sections/`; shared presentational primitives under
   `landing/ui/`. Keep sections self-contained (SRP) so edits to one never break another.
-- `/app` (and `/app/...`) — the application (`packages/web/src/App.tsx` and `components/**`).
+- `/app` (and `/app/...`): the application (`packages/web/src/App.tsx` and `components/**`).
 
 Navigate with `navigate("/app")`; never use a raw `<a href>` that reloads the page for in-app
 routing. The PWA `start_url` is `/app`.
@@ -160,10 +160,10 @@ Order uses fractional indexes.
 
 Branches live in separate worktrees (sibling directories), one owner per package:
 
-- `feat/scaffold` — monorepo + `@quadrant/core` reference implementation (in-memory) so the web app
+- `feat/scaffold`: monorepo + `@quadrant/core` reference implementation (in-memory) so the web app
   can run before the Yjs layer lands.
-- `feat/core` — the real `@quadrant/core` (Yjs + y-indexeddb) + vitest tests. Owns `packages/core/**`.
-- `feat/web` — `@quadrant/web`. Owns `packages/web/**`.
+- `feat/core`: the real `@quadrant/core` (Yjs + y-indexeddb) + vitest tests. Owns `packages/core/**`.
+- `feat/web`: `@quadrant/web`. Owns `packages/web/**`.
 
 Merge order: `scaffold` → `core` → `web`. `feat/core` replaces the scaffold's reference
 implementation; it has the same contract, so nothing else changes.
@@ -174,8 +174,8 @@ Commit style: `feat(core): …`, `feat(web): …`, `chore: …`, `docs: …`.
 
 1. `pnpm typecheck` and `pnpm test` are green.
 2. `pnpm build` succeeds.
-3. Both surfaces are loaded in the pen.dev integrated browser — the landing page
-   (`load-page http://localhost:5173/`) and the app (`load-page http://localhost:5173/app`) — then
+3. Both surfaces are loaded in the pen.dev integrated browser: the landing page
+   (`load-page http://localhost:5173/`) and the app (`load-page http://localhost:5173/app`): then
    checked with `return-screenshot`; the app is driven with CDP for the keyboard flows (add, triage,
    today, complete, reload persistence).
 

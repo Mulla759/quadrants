@@ -3,6 +3,7 @@ import { DoneSection } from "./sections/DoneSection"
 import { FinalCta } from "./sections/FinalCta"
 import { Footer } from "./sections/Footer"
 import { Hero } from "./sections/Hero"
+import { InspirationSection } from "./sections/InspirationSection"
 import { KeyboardSection } from "./sections/KeyboardSection"
 import { LocalFirstSection } from "./sections/LocalFirstSection"
 import { MapSection } from "./sections/MapSection"
@@ -22,6 +23,7 @@ export function LandingPage() {
         <CategoriesSection />
         <KeyboardSection />
         <LocalFirstSection />
+        <InspirationSection />
         <RoadmapSection />
         <FinalCta />
       </main>

@@ -75,7 +75,11 @@ export function Footer() {
           />
           <FooterColumn
             title="PROJECT"
-            links={[{ label: "Roadmap", href: "#roadmap" }, { label: "Open Quadrant" }]}
+            links={[
+              { label: "Origin", href: "#origin" },
+              { label: "Roadmap", href: "#roadmap" },
+              { label: "Open Quadrant" },
+            ]}
           />
         </div>
       </Container>

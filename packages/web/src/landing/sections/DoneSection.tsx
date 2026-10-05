@@ -1,25 +1,8 @@
-import { useEffect, useRef } from "react"
 import { Circle, CircleCheck } from "lucide-react"
 import { Container } from "../ui/Container"
 import { MonoLabel } from "../ui/MonoLabel"
+import { Scribble } from "../ui/Scribble"
 import { cn } from "../../lib/utils"
-import { drawScribble, SCRIBBLE_HEIGHT } from "../../lib/scribble"
-
-function DoneScribble({ width, className }: { width: number; className?: string }) {
-  const ref = useRef<HTMLCanvasElement>(null)
-  useEffect(() => {
-    if (ref.current) drawScribble(ref.current, width, 1)
-  }, [width])
-  return (
-    <canvas
-      ref={ref}
-      height={SCRIBBLE_HEIGHT}
-      className={className}
-      style={{ width, height: SCRIBBLE_HEIGHT }}
-      aria-hidden
-    />
-  )
-}
 
 type DoneRow = {
   title: string
@@ -78,7 +61,7 @@ export function DoneSection() {
                   <div className="whitespace-nowrap text-[14px] text-muted">{row.meta}</div>
                 </div>
                 {row.done && row.scribbleWidth !== undefined && (
-                  <DoneScribble
+                  <Scribble
                     width={row.scribbleWidth}
                     className="absolute left-[40px] top-[28px] z-[2]"
                   />
@@ -100,12 +83,12 @@ export function DoneSection() {
         </div>
 
         <div className="flex w-[400px] shrink-0 flex-col gap-[28px]">
-          <MonoLabel>03 — DONE</MonoLabel>
+          <MonoLabel>03 · DONE</MonoLabel>
           <h2 className="whitespace-nowrap text-[52px]/[55px] font-semibold tracking-[-1.8px] text-ink">
             Cross it out.
           </h2>
           <p className="w-full text-[17px]/[27px] text-muted">
-            Finishing a task draws a quick, hand-made scribble straight through it — the best part of
+            Finishing a task draws a quick, hand-made scribble straight through it, the best part of
             paper, kept. You get five seconds to undo, and after a week done tasks quietly file
             themselves into the Archive.
           </p>

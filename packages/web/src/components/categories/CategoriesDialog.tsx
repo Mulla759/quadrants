@@ -151,7 +151,7 @@ export function CategoriesDialog() {
         </div>
 
         <p className="border-t border-line px-3 py-2 text-[11px] text-faint">
-          Quadrants stay uncolored — color marks the life area.
+          Quadrants stay uncolored. Color marks the life area.
         </p>
       </div>
     </Modal>

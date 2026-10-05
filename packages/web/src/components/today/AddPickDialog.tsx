@@ -66,7 +66,7 @@ export function AddPickDialog({
                     />
                   ) : null}
                   <span className="min-w-0 flex-1 truncate text-[14px] text-ink">{task.title}</span>
-                  <span className="shrink-0 font-mono text-[10px] text-faint">{quadrant?.number ?? "—"}</span>
+                  <span className="shrink-0 font-mono text-[10px] text-faint">{quadrant?.number ?? "–"}</span>
                 </button>
               )
             })

@@ -34,6 +34,8 @@ interface UIContextValue {
   setSearchOpen: (open: boolean) => void
   categoriesOpen: boolean
   setCategoriesOpen: (open: boolean) => void
+  printOpen: boolean
+  setPrintOpen: (open: boolean) => void
   sidebarOpen: boolean
   setSidebarOpen: (open: boolean) => void
   toasts: Toast[]
@@ -56,6 +58,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [paletteOpen, setPaletteOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [categoriesOpen, setCategoriesOpen] = useState(false)
+  const [printOpen, setPrintOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [toasts, setToasts] = useState<Toast[]>([])
   const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>())
@@ -135,6 +138,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
       setSearchOpen,
       categoriesOpen,
       setCategoriesOpen,
+      printOpen,
+      setPrintOpen,
       sidebarOpen,
       setSidebarOpen,
       toasts,
@@ -160,6 +165,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
       paletteOpen,
       searchOpen,
       categoriesOpen,
+      printOpen,
       sidebarOpen,
       toasts,
       pushToast,

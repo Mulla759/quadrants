@@ -1,25 +1,8 @@
-import { useEffect, useRef } from "react"
 import { ArrowDown, ArrowUp, Circle, CircleCheck } from "lucide-react"
 import { Container } from "../ui/Container"
 import { MonoLabel } from "../ui/MonoLabel"
+import { Scribble } from "../ui/Scribble"
 import { cn } from "../../lib/utils"
-import { drawScribble, SCRIBBLE_HEIGHT } from "../../lib/scribble"
-
-function DoneScribble({ width, className }: { width: number; className?: string }) {
-  const ref = useRef<HTMLCanvasElement>(null)
-  useEffect(() => {
-    if (ref.current) drawScribble(ref.current, width, 1)
-  }, [width])
-  return (
-    <canvas
-      ref={ref}
-      height={SCRIBBLE_HEIGHT}
-      className={className}
-      style={{ width, height: SCRIBBLE_HEIGHT }}
-      aria-hidden
-    />
-  )
-}
 
 function MapHeader({
   index,
@@ -92,7 +75,7 @@ function MapTask({
         </div>
       )}
       {done && scribbleWidth !== undefined && (
-        <DoneScribble width={scribbleWidth} className="absolute left-[32px] top-[8px] z-[2]" />
+        <Scribble width={scribbleWidth} className="absolute left-[32px] top-[8px] z-[2]" />
       )}
     </div>
   )
@@ -104,7 +87,7 @@ export function MapSection() {
       <Container className="flex flex-col gap-[72px] border-t border-line pt-[136px] pb-[144px]">
         <div className="flex w-full flex-row items-end justify-between">
           <div className="flex w-fit shrink-0 flex-col gap-[20px]">
-            <MonoLabel>01 — THE MAP</MonoLabel>
+            <MonoLabel>01 · THE MAP</MonoLabel>
             <h2 className="whitespace-nowrap text-[52px]/[55px] font-semibold tracking-[-1.8px] text-ink">
               One map for everything
               <br />
@@ -113,7 +96,7 @@ export function MapSection() {
           </div>
           <p className="w-[420px] shrink-0 text-[17px]/[27px] text-muted">
             Every task lands on two axes: how urgent it is, and how much it matters. When life
-            shifts, drag it to another quadrant — or just press 1–4.
+            shifts, drag it to another quadrant, or just press 1–4.
           </p>
         </div>
 
@@ -153,7 +136,7 @@ export function MapSection() {
                   index="01"
                   title="Most important"
                   count="1"
-                  subtitle="Urgent and important. Do these first — today starts here."
+                  subtitle="Urgent and important. Do these first. Today starts here."
                 />
                 <div className="flex w-full shrink-0 flex-col gap-[2px]">
                   <MapTask title="Finish landing page" dot="#5B7CBA" meta="Website · Today" />

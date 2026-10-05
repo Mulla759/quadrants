@@ -81,7 +81,7 @@ export function KeyboardSection() {
     <section id="shortcuts" className="w-full scroll-mt-[72px] bg-[#141413]">
       <Container className="flex flex-row items-center gap-[96px] py-[144px]">
         <div className="flex flex-1 flex-col items-start gap-[28px]">
-          <MonoLabel className="text-[#A0A0A8]!">05 — KEYBOARD</MonoLabel>
+          <MonoLabel className="text-[#A0A0A8]!">05 · KEYBOARD</MonoLabel>
           <h2 className="text-[52px] leading-[55px] font-semibold tracking-[-1.8px] text-[#F2F2F0]">
             As fast as you can type.
           </h2>

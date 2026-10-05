@@ -5,9 +5,9 @@ Source design: `design/landing/reference.html` (exported from `~/Documents/quadr
 
 ## Structure (single responsibility)
 
-- `LandingPage.tsx` — composition only. It renders the sections; it holds no content or logic.
-- `sections/<Name>.tsx` — one section per file. A section owns its own copy and its own markup.
-- `ui/*.tsx` — shared presentational primitives (`Button`, `Container`, `Kbd`, `MonoLabel`,
+- `LandingPage.tsx`: composition only. It renders the sections; it holds no content or logic.
+- `sections/<Name>.tsx`: one section per file. A section owns its own copy and its own markup.
+- `ui/*.tsx`: shared presentational primitives (`Button`, `Container`, `Kbd`, `MonoLabel`,
   `CategoryDot`). No business logic, no section-specific content.
 
 Rules:
