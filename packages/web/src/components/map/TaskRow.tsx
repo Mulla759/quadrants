@@ -3,7 +3,7 @@ import { Check, GripVertical, MoreHorizontal } from "lucide-react"
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import { CATEGORY_COLORS, formatDueDate, type Category, type Task } from "@quadrant/core"
 import { cn } from "../../lib/utils"
-import { animateScribble, drawScribble, SCRIBBLE_HEIGHT } from "../../lib/scribble"
+import { animateScribble, drawScribble, prefersReducedMotion, SCRIBBLE_HEIGHT } from "../../lib/scribble"
 
 function useTitleWidth<T extends HTMLElement>() {
   const ref = useRef<T>(null)
@@ -73,6 +73,19 @@ export function TaskRowBase({
   const completed = Boolean(task.completedAt)
   const { ref: titleRef, width: titleWidth } = useTitleWidth<HTMLSpanElement>()
 
+  // Pop the check mark only when the user just completed this task, not on initial
+  // render of tasks that were already done.
+  const prevCompletedRef = useRef(completed)
+  const [checkPop, setCheckPop] = useState(false)
+  useEffect(() => {
+    const prev = prevCompletedRef.current
+    prevCompletedRef.current = completed
+    if (!completed || prev || prefersReducedMotion()) return
+    setCheckPop(true)
+    const timer = window.setTimeout(() => setCheckPop(false), 240)
+    return () => window.clearTimeout(timer)
+  }, [completed])
+
   const metaParts: string[] = []
   if (completed) {
     metaParts.push("Done")
@@ -110,16 +123,21 @@ export function TaskRowBase({
             onToggle?.()
           }}
           className={cn(
-            "flex h-[15px] w-[15px] shrink-0 items-center justify-center rounded-full border text-muted outline-none focus-visible:ring-2 focus-visible:ring-accent",
+            "flex h-[15px] w-[15px] shrink-0 items-center justify-center rounded-full border text-muted outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-accent",
             completed ? "border-muted" : "border-muted/60 hover:border-accent",
           )}
         >
-          {completed ? <Check className="h-[10px] w-[10px]" strokeWidth={3} /> : null}
+          {completed ? (
+            <Check className={cn("h-[10px] w-[10px]", checkPop && "check-pop")} strokeWidth={3} />
+          ) : null}
         </button>
         <div className="relative min-w-0 flex-1">
           <span
             ref={titleRef}
-            className={cn("block truncate text-[14px]", completed ? "text-faint" : "text-ink")}
+            className={cn(
+              "block truncate text-[14px] transition-colors duration-200",
+              completed ? "text-faint" : "text-ink",
+            )}
           >
             {task.title}
           </span>
