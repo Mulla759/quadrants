@@ -5,6 +5,19 @@
 A calm, text-first to-do app built on one urgency × importance map, a daily top three, and
 color-coded life categories. It runs in the browser with no account and stores everything locally.
 
+## Demo & source
+
+| | |
+| --- | --- |
+| **Live demo** | <https://quadrant-mulla759.vercel.app> (landing at `/`, app at `/app`) |
+| **Source** | <https://github.com/Mulla759/quadrants> (public) |
+
+![Quadrant MVP: the four-quadrant matrix with a scribble-completed task](documentation/assets/mvp-02-core-action.png)
+
+*Current MVP (2026-11-22, synthetic demo data): tasks triaged into the four urgency × importance quadrants; "Call grandma" is completed with the hand-drawn scribble.*
+
+**Role & maturity.** I am the developer of this implementation; the concept and paper system are credited to Isabel (Agent 28) below. Status: **current MVP** — feature-complete per the M-1…M-15 checklist in [`docs/AGENT.md`](docs/AGENT.md), single-user and local-first, deployed on Vercel. See the [portfolio documentation](documentation/README.md) for role details, evidence labels, and known gaps.
+
 ## The origin
 
 Quadrant exists because of **Isabel**, also known as **Agent 28** ([@invinciblevenus_](https://www.tiktok.com/@invinciblevenus_)).
@@ -48,6 +61,19 @@ pnpm test
 pnpm build
 ```
 
+Validation (run in CI on every push to `main` and on PRs — `.github/workflows/ci.yml`):
+
+```sh
+pnpm install --frozen-lockfile
+pnpm typecheck   # tsc --noEmit across packages
+pnpm test        # vitest: core + web (see documentation/engineering.md)
+pnpm build       # turbo: core then web → packages/web/dist
+```
+
+## Portfolio documentation
+
+For reviewers: start at [`documentation/README.md`](documentation/README.md) (review guide + rubric-to-evidence checklist), then the [case study](documentation/case-study.md), [decisions](documentation/decisions.md), and [engineering notes](documentation/engineering.md). Screenshots live in [`documentation/assets/`](documentation/assets/) — all captured from the real running app with synthetic demo data, labeled and dated.
+
 ## Structure
 
 ```
@@ -66,6 +92,12 @@ Agent and API notes live in [`docs/AGENT.md`](docs/AGENT.md); every doc is index
 - **MVP**: the local single-user system above.
 - **V1**: share a map by link, live presence over WebSockets (Hocuspocus + Postgres).
 - **V2**: optional login (backup/sync), Expo mobile apps, home-screen widgets.
+
+## Known limitations
+
+- **Single device.** Local-first by design: data lives in your browser's IndexedDB, no account, no sync (roadmap V1/V2).
+- **Desktop-first layout.** The landing is pixel-designed for wide screens; it remains usable in narrow panes but looks best on desktop.
+- **No analytics.** Deliberately no tracking, so usage outcomes are unmeasured — see the [results gap](documentation/case-study.md#6-results) in the case study.
 
 ## Credits & license
 

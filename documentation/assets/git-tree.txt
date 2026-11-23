@@ -1,0 +1,32 @@
+* ee7a8f5 (HEAD -> main) feat(web): animate landing Today/Done sections, pop check on completion
+* f2e9020 (origin/main, origin/HEAD) docs: organize project docs under docs/
+*   9c8a1b6 Merge pull request #1 from Mulla759/feat/landing
+|\  
+| * 1e53058 (origin/feat/landing, feat/landing) feat(web): origin story, landing animations, and print sheet
+| * 8e7a785 fix(web): match design scribble loop count; docs: document landing routing
+| *   e867780 Merge branch 'feat/landing-shell' into feat/landing
+| |\  
+| | * 3e06436 (origin/feat/landing-shell, feat/landing-shell) feat(web): route landing and app, harden cross-browser support
+| * |   ff169ec Merge branch 'feat/landing-b' into feat/landing
+| |\ \  
+| | * | 1d6fd7b (origin/feat/landing-b, feat/landing-b) feat(landing): nav, keyboard, local-first, roadmap, final CTA, footer sections
+| | |/  
+| * |   a3bc8c5 Merge branch 'feat/landing-a' into feat/landing
+| |\ \  
+| | * | d2e8d84 (origin/feat/landing-a, feat/landing-a) feat(landing): hero, product window, map, today, done, categories sections
+| | |/  
+| * / b909d40 docs(landing): add per-section design references
+| |/  
+| * 4dbeb52 feat(landing): scaffold landing page structure, router, and design reference
+| *   8af2d65 (origin/feat/mvp, feat/mvp) merge: web MVP interface
+| |\  
+| | * a6dea8e (origin/feat/web, feat/web) feat(web): build the Quadrant MVP interface
+| |/  
+|/|   
+| * b8a1e4d merge: core yjs data layer
+|/| 
+| * 31d0ced (origin/feat/core, feat/core) feat(core): implement yjs + indexeddb data layer
+|/  
+* 8eee151 chore: scaffold pnpm monorepo with core reference implementation
+* 2923f33 docs: add design system, agent guide, and README
+* 53cda7c Initial commit

@@ -1,0 +1,20 @@
+ee7a8f5|2026-11-17|Mulla759|feat(web): animate landing Today/Done sections, pop check on completion
+f2e9020|2026-10-05|Mulla759|docs: organize project docs under docs/
+9c8a1b6|2026-10-05|Abdullahi Abdi|Merge pull request #1 from Mulla759/feat/landing
+1e53058|2026-10-05|Mulla759|feat(web): origin story, landing animations, and print sheet
+8e7a785|2026-10-04|Mulla759|fix(web): match design scribble loop count; docs: document landing routing
+e867780|2026-10-04|Mulla759|Merge branch 'feat/landing-shell' into feat/landing
+ff169ec|2026-10-04|Mulla759|Merge branch 'feat/landing-b' into feat/landing
+a3bc8c5|2026-10-04|Mulla759|Merge branch 'feat/landing-a' into feat/landing
+d2e8d84|2026-10-04|Mulla759|feat(landing): hero, product window, map, today, done, categories sections
+1d6fd7b|2026-10-04|Mulla759|feat(landing): nav, keyboard, local-first, roadmap, final CTA, footer sections
+3e06436|2026-10-04|Mulla759|feat(web): route landing and app, harden cross-browser support
+b909d40|2026-10-04|Mulla759|docs(landing): add per-section design references
+4dbeb52|2026-10-03|Mulla759|feat(landing): scaffold landing page structure, router, and design reference
+8af2d65|2026-10-01|Mulla759|merge: web MVP interface
+b8a1e4d|2026-10-01|Mulla759|merge: core yjs data layer
+a6dea8e|2026-10-01|Mulla759|feat(web): build the Quadrant MVP interface
+31d0ced|2026-10-01|Mulla759|feat(core): implement yjs + indexeddb data layer
+8eee151|2026-10-01|Mulla759|chore: scaffold pnpm monorepo with core reference implementation
+2923f33|2026-10-01|Mulla759|docs: add design system, agent guide, and README
+53cda7c|2026-09-28|Abdullahi Abdi|Initial commit

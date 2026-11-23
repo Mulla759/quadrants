@@ -8,6 +8,7 @@ Project documentation for **Quadrant**.
 | [`AGENT.md`](AGENT.md) | Repo layout, routing, commands, and the `@quadrant/core` API contract |
 | [`DESIGN.md`](DESIGN.md) | Visual system: frames, tokens, layout, interaction states |
 | [`BROWSER_SUPPORT.md`](BROWSER_SUPPORT.md) | Supported browsers, graceful degradation, static hosting |
+| [`../documentation/`](../documentation/README.md) | Portfolio evidence: case study, engineering notes, decisions, screenshots |
 
 ## Repo root
 
