@@ -9,6 +9,7 @@ Review guide for the Method **Engineering Resident** and **Product Management Re
 | [`case-study.md`](case-study.md) | Product narrative: problem, discovery, MVP, walkthrough (with real screenshots), results, next steps. |
 | [`engineering.md`](engineering.md) | Architecture, data flow, one documented technical challenge, testing, and version-control evidence. |
 | [`decisions.md`](decisions.md) | MVP scope table and the 5 most consequential decisions, with alternatives and revisit conditions. |
+| [`feedback.md`](feedback.md) | User feedback log: real feedback entries with source, date, insight, and limitations. |
 | [`assets/`](assets/) | Screenshots of the current MVP, captured from the real running app (synthetic demo data, labeled). |
 
 Existing project docs that these link to: [`../README.md`](../README.md) (overview + commands), [`../docs/AGENT.md`](../docs/AGENT.md) (repo layout + MVP checklist M-1…M-15), [`../docs/DESIGN.md`](../docs/DESIGN.md) (visual system), [`../docs/BROWSER_SUPPORT.md`](../docs/BROWSER_SUPPORT.md).
@@ -33,7 +34,7 @@ Every substantive claim is labeled: **Verified** (traceable to a file, commit, t
 | Engineering: testing and version control | Supported | [Test suite](engineering.md#testing), CI workflow (`.github/workflows/ci.yml`), 21-commit history with feature branches and a merged PR | CI is newly added this week; see [engineering.md](engineering.md#testing) for what remains untested |
 | Engineering: technical problem-solving | Supported | [The narrow-pane animation bug](engineering.md#technical-challenge) — found, investigated, fixed, and validated during this task (labeled as such) | — |
 | Product: problem and framing | Supported | [Problem and opportunity](case-study.md#1-problem-and-opportunity), origin story in [README](../README.md) | Market demand is a hypothesis, not measured |
-| Product: discovery | Partial | One real, linkable discovery source: Isabel's published whiteboard system ([video](https://www.tiktok.com/@invinciblevenus_/video/7641595518291954977), [credit](../README.md)) | No user interviews, surveys, or usage analytics exist. Gap + validation plan in [case-study.md](case-study.md#3-discovery) |
+| Product: discovery | Partial | One real, linkable discovery source (Isabel's [video](https://www.tiktok.com/@invinciblevenus_/video/7641595518291954977)) plus one real but informal interview (n = 1, Abdikarim Mohamed) recorded in the [feedback log](feedback.md) | No systematic research yet — no surveys, usability tests, or analytics. Collection is ongoing; plan in [case-study.md](case-study.md#3-discovery) |
 | Product: prioritization and scope | Supported | [MVP scope table and decisions](decisions.md), MVP checklist M-1…M-15 in [docs/AGENT.md](../docs/AGENT.md) | Some original rationale is reconstructed retroactively and labeled |
 | Product: results | Partial | Technical outcomes are verified ([engineering.md](engineering.md#testing), live site). User/business outcomes: **Missing** — no analytics exist (local-first, no account) | Measurement plan in [case-study.md](case-study.md#6-results) |
 | Across both tracks (communication, ambiguity) | Supported | This guide, the case study, and decision records are written for a multidisciplinary reviewer; uncertainty is labeled rather than hidden | — |
