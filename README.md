@@ -50,7 +50,7 @@ Quadrant is an independent, unaffiliated tribute, free to use under the [Apache-
 - Today: top three + side quests, with carry-over
 - Multiple maps, Inbox, Archive (auto-archive after 7 days)
 - IndexedDB persistence, fully offline, "Saved" status, JSON export/import
-- Keyboard shortcuts, `/` search, ⌘K command palette, ⌘P print sheet, dark mode, installable PWA
+- Keyboard shortcuts, `/` search, ⌘K command palette, ⌘P print sheet, dark mode, PWA groundwork (service worker + manifest; install surfaces as "Coming soon")
 
 ## Quick start
 
@@ -96,6 +96,7 @@ Agent and API notes live in [`docs/AGENT.md`](docs/AGENT.md); every doc is index
 ## Known limitations
 
 - **Single device.** Local-first by design: data lives in your browser's IndexedDB, no account, no sync (roadmap V1/V2).
+- **Install is "Coming soon".** The PWA groundwork (manifest + service worker) is in place, but the install surface is grayed out until it's been tested end to end.
 - **Desktop-first layout.** The landing is pixel-designed for wide screens; it remains usable in narrow panes but looks best on desktop.
 - **No analytics.** Deliberately no tracking, so usage outcomes are unmeasured — see the [results gap](documentation/case-study.md#6-results) in the case study.
 

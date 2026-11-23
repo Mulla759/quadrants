@@ -13,7 +13,7 @@
 | Life balance | Today: 3 focus + 3 side quests, carry-over | Included | The "three things" ritual (M-7) | `FOCUS_LIMIT = 3`, daily-plan tests in core |
 | Context | Up to 8 muted-color categories, multiple maps, Inbox, Archive | Included | Color = life area, per the method (M-6/M-8/M-9) | `CATEGORY_COLORS`, `MapStore`/`WorkspaceStore` |
 | Own your data | IndexedDB, offline, "Saved" status, JSON export/import | Included | Privacy by default (M-10/M-11) | `y-indexeddb` usage in core, export/import in `lib/utils` |
-| Power use | Shortcuts, `/` search, ⌘K palette, ⌘P print, dark mode, PWA | Included | Completes the MVP promise (M-12…M-15) | `CommandPalette.tsx`, `PrintSheet.tsx`, `vite.config.ts` manifest |
+| Power use | Shortcuts, `/` search, ⌘K palette, ⌘P print, dark mode, PWA groundwork | Included (install surfaces as "Coming soon") | Completes the MVP promise (M-12…M-15) | `CommandPalette.tsx`, `PrintSheet.tsx`, `vite.config.ts` manifest |
 | Multiplayer/share | Link-shared maps, live presence | Deferred → V1 | Needs a server; not required for solo value | [README roadmap](../README.md) |
 | Accounts & sync | Optional login backup/sync | Deferred → V2 | Local-first is the differentiator (D01) | [README roadmap](../README.md) |
 | Mobile apps | Expo mobile + widgets | Deferred → V2 | Desktop-first MVP; web PWA bridges the gap | [README roadmap](../README.md) |

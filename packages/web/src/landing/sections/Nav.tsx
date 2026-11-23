@@ -38,10 +38,11 @@ export function Nav() {
         <div className="flex flex-row items-center gap-[20px]">
           <button
             type="button"
-            onClick={() => navigate("/app")}
-            className="text-[14px] text-muted transition-colors hover:text-ink"
+            disabled
+            aria-label="Install app — coming soon"
+            className="cursor-not-allowed text-[14px] text-faint"
           >
-            Install app
+            Coming soon
           </button>
           <Button size="sm" onClick={() => navigate("/app")}>
             Open Quadrant
