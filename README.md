@@ -16,7 +16,7 @@ color-coded life categories. It runs in the browser with no account and stores e
 
 *Current MVP (2026-11-22, synthetic demo data): tasks triaged into the four urgency × importance quadrants; "Call grandma" is completed with the hand-drawn scribble.*
 
-**Role & maturity.** I am the developer of this implementation; the concept and paper system are credited to Isabel (Agent 28) below. Status: **current MVP** — feature-complete per the M-1…M-15 checklist in [`docs/AGENT.md`](docs/AGENT.md), single-user and local-first, deployed on Vercel. See the [portfolio documentation](documentation/README.md) for role details, evidence labels, and known gaps.
+**Role & maturity.** I'm **Abdullahi Abdi** ([@Mulla759](https://github.com/Mulla759)), the developer of this implementation; the concept and paper system are credited to Isabel (Agent 28) below. Status: **current MVP** — feature-complete per the M-1…M-15 checklist in [`docs/AGENT.md`](docs/AGENT.md), single-user and local-first, deployed on Vercel. See the [portfolio documentation](documentation/README.md) for role details, evidence labels, and known gaps.
 
 ## The origin
 
@@ -102,4 +102,4 @@ Agent and API notes live in [`docs/AGENT.md`](docs/AGENT.md); every doc is index
 ## Credits & license
 
 Original concept and paper system: **Isabel (Agent 28, [@invinciblevenus_](https://www.tiktok.com/@invinciblevenus_))**.
-Digital implementation: [@Mulla759](https://github.com/Mulla759). Licensed under [Apache-2.0](LICENSE).
+Digital implementation: **Abdullahi Abdi** ([@Mulla759](https://github.com/Mulla759)). Licensed under [Apache-2.0](LICENSE).

@@ -14,7 +14,7 @@
 
 ## 2. My contribution and constraints
 
-**Role.** I am the developer of the digital implementation. The original concept and paper system are credited to Isabel (Agent 28); the README states this explicitly. Git history supports single-developer ownership: all 20 commits from `53cda7c` (2026-09-28) to `ee7a8f5` (2026-11-17) are authored by one GitHub account (`Mulla759` / `Abdullahi Abdi`, same account id). **(Verified via `git log --format="%an <%ae>" --all | sort -u`.)** *Needs your confirmation: whether the portfolio should present you as "Mulla759" or "Abdullahi Abdi", and whether any collaborative work exists that git doesn't show.*
+**Role.** I'm **Abdullahi Abdi** ([@Mulla759](https://github.com/Mulla759)), the developer of the digital implementation. The original concept and paper system are credited to Isabel (Agent 28); the README states this explicitly. Git history supports single-developer ownership: all 20 commits from `53cda7c` (2026-09-28) to `ee7a8f5` (2026-11-17) are authored by one GitHub account. **(Verified via `git log --format="%an <%ae>" --all | sort -u`.)**
 
 **Timeline.** Initial commit 2026-09-28; core data layer and web MVP merged 2026-10-01; landing page built across feature branches and merged via PR #1 on 2026-10-05; docs reorganized 2026-10-05; landing/animation refinements 2026-11-17. **(Verified via [git-log.txt](assets/git-log.txt).)**
 
