@@ -9,7 +9,7 @@ color-coded life categories. It runs in the browser with no account and stores e
 
 | | |
 | --- | --- |
-| **Live demo** | <https://quadrant-mulla759.vercel.app> (landing at `/`, app at `/app`) |
+| **Live demo** | <https://quadrants-nine.vercel.app> (landing at `/`, app at `/app`) |
 | **Source** | <https://github.com/Mulla759/quadrants> (public) |
 
 ![Quadrant MVP: the four-quadrant matrix with a scribble-completed task](documentation/assets/mvp-02-core-action.png)
