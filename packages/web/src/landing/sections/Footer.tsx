@@ -3,14 +3,23 @@ import { navigate } from "../../router"
 import { CategoryDot } from "../ui/CategoryDot"
 import { Container } from "../ui/Container"
 
-type FooterLink = { label: string; href?: string }
+type FooterLink = { label: string; href?: string; disabled?: boolean }
 
 function FooterColumn({ title, links }: { title: string; links: FooterLink[] }) {
   return (
     <div className="flex flex-col items-start gap-[12px]">
       <span className="font-mono text-[11px] tracking-[1px] text-faint">{title}</span>
       {links.map((link) =>
-        link.href ? (
+        link.disabled ? (
+          <span
+            key={link.label}
+            aria-disabled="true"
+            title="Coming soon"
+            className="cursor-not-allowed text-[14px] text-faint"
+          >
+            {link.label}
+          </span>
+        ) : link.href ? (
           <a
             key={link.label}
             href={link.href}
@@ -70,7 +79,7 @@ export function Footer() {
             links={[
               { label: "Privacy", href: "#local-first" },
               { label: "Export & import" },
-              { label: "Install as an app" },
+              { label: "Install as an app", disabled: true },
             ]}
           />
           <FooterColumn
@@ -93,6 +102,12 @@ export function Footer() {
                 <span className="text-[12px] text-faint">{item.label}</span>
               </div>
             ))}
+          </div>
+          <div
+            aria-hidden
+            className="flex h-[18px] w-[30px] shrink-0 items-center justify-center rounded-full border border-line bg-surface"
+          >
+            <span className="h-[5px] w-[5px] rounded-full bg-[#6E9163]" />
           </div>
           <div className="flex flex-row items-center gap-[8px]">
             <span className="text-[12px] text-faint">© 2026 Quadrant</span>

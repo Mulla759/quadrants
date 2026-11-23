@@ -41,7 +41,7 @@
 Screenshots captured **2026-11-22** from the running app at commit `ee7a8f5` (+ portfolio docs, uncommitted at capture time). All data shown is **synthetic demo data** seeded in a throwaway browser profile; no real user data is depicted. Label: **Current MVP** — there is no separate "original MVP" artifact, so no historical comparison is made.
 
 ![Entry point: the landing page](assets/mvp-01-entry.png)
-*The entry point (landing at `/`). Explains the user need — one map, today has three — and links into the app. Supports the product framing requirement and decision **D04** (one app serves both landing and product).*
+*The entry point (landing at `/`): a centered, minimal hero — "Make a map. Pick three." — with the app's install surface and the product demo window below. Supports the product framing requirement and decision **D04** (one app serves both landing and product).*
 
 ![Core action: sorting tasks into quadrants](assets/mvp-02-core-action.png)
 *The central workflow (app at `/app`): tasks triaged into the four urgency × importance quadrants. "Call grandma" is completed, showing the scribble + fade (M-5). The task list is synthetic. Supports **M-1/M-2/M-5** and decisions **D01/D03**.*

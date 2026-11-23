@@ -1,6 +1,5 @@
 import { CategoriesSection } from "./sections/CategoriesSection"
 import { DoneSection } from "./sections/DoneSection"
-import { FinalCta } from "./sections/FinalCta"
 import { Footer } from "./sections/Footer"
 import { Hero } from "./sections/Hero"
 import { InspirationSection } from "./sections/InspirationSection"
@@ -25,7 +24,6 @@ export function LandingPage() {
         <LocalFirstSection />
         <InspirationSection />
         <RoadmapSection />
-        <FinalCta />
       </main>
       <Footer />
     </div>

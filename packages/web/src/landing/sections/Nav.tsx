@@ -15,7 +15,7 @@ const LINKS = [
 export function Nav() {
   return (
     <nav className="sticky top-0 z-40 w-full bg-bg/90 backdrop-blur">
-      <Container className="flex h-[72px] flex-row items-center justify-between">
+      <Container className="flex min-h-[72px] flex-row flex-wrap items-center justify-between gap-x-[16px] gap-y-[8px] py-[10px]">
         <div className="flex flex-row items-center gap-[48px]">
           <div className="flex flex-row items-center gap-[10px]">
             <span className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-[5px] bg-ink">
